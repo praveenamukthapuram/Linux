@@ -17,7 +17,7 @@ int main()
         return 0;
 }
 ```
-##2. Develop a C program to open an existing text file and display its contents.
+## 2. Develop a C program to open an existing text file and display its contents.
 
 ```c
 #include <stdio.h>
