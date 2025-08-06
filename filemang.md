@@ -1,5 +1,5 @@
 ## 1. Write a c program to create a new text file and write "hi....' to it.
-...c
+```c
 #include <stdio.h>
 
 int main()
@@ -16,4 +16,4 @@ int main()
         printf("Wrote Successfully\n");
         return 0;
 }
-...
+```
