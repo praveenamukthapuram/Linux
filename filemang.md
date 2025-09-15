@@ -43,3 +43,17 @@ int main()
         return 0;
 }
 ```
+
+## 3. What are the types of files present in Linux OS?
+- Normal files = user data (text, binaries, etc.)
+- Special files = system/IPC-related (dir, link, pipe, socket)
+- Device files = represent hardware devices (char/block)
+
+## 4. How do IPC Objects ,named pipes, be accessed?
+- These are special files.
+- IPC objects in linux are --> Pipes & Named Pipes
+                           --> Message Queues
+                           --> Shared Memory
+                           --> Semaphores
+                           --> Sockets
+  
