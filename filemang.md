@@ -127,3 +127,55 @@ int main()
       mmap()	  Map device memory to user space (for faster I/O).
       close()	  Close the device file.
   
+## 6. Why are basic I/O calls called universal I/O calls?
+- Basic I/O calls are called universal I/O calls because the same set of system calls can perform I/O on any kind of file/device in Linux/Unix, providing a          single, consistent interface.
+- open(), read(), write(), close(), lseek(), ioctl().
+
+## 7. What is the content of the Inode Object?
+- An inode (index node) is a data structure used by Unix/Linux filesystems to store metadata about a file.
+- Every file has one inode, which the filesystem uses to locate and manage it.
+- The inode does not store the file name or actual data; it stores information about the file.
+- Contents of an inode objects,
+-     Field in Inode	         Description
+       File type	          Regular file, directory, symbolic link, etc.
+       Permissions / Mode	  Read, write, execute bits for user, group, others (e.g., rwxr-xr-x).
+       Owner ID (UID)	          User ID of the file owner.
+       Group ID (GID)	          Group ID of the file’s group.
+       File size	          Total size in bytes.
+       Timestamps	          Access time (atime)
+
+## 8. In which Object information of the file get stored?
+- The inode object stores the information of a file.
+
+## 9. Kernel uses which object to represent a file?
+- Kernel uses inode object to represent a file.
+
+## 10. Can we access the file information present in inode from the user application if yes, then how?
+- We can access most of the file information stored in the inode from a user-space application in Linux.
+- But we  can’t directly read the kernel’s inode structure (because it’s in kernel space), but Linux provides system calls and utilities that expose inode           information safely to user space.
+- User Applications access Inode information by using , stat(), fstat(), lstat().
+- By using stat(),
+
+  ```c
+     #include <stdio.h>
+      #include <sys/stat.h>
+      #include <unistd.h>
+
+      int main() {
+      struct stat fileStat;
+
+      if (stat("myfile.txt", &fileStat) == -1) {
+        perror("stat");
+        return 1;
+      }
+
+      printf("Inode number: %ld\n", fileStat.st_ino);
+      printf("File size: %ld bytes\n", fileStat.st_size);
+      printf("Number of hard links: %ld\n", fileStat.st_nlink);
+      printf("Owner UID: %d\n", fileStat.st_uid);
+      printf("Group GID: %d\n", fileStat.st_gid);
+      printf("Permissions: %o\n", fileStat.st_mode & 0777);
+
+      return 0;
+      }
+  ```
