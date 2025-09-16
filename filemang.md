@@ -112,4 +112,18 @@ int main()
          - Types , Stream socket (TCP) – Reliable, connection-oriented.
                    Datagram socket (UDP) – Faster, connectionless.
                    Unix domain socket – For local IPC.
+
+## 5. User space application sends request to Hardware by using which I/O calls?
+- In linux, a user space application cannot talk to hardware directly, it must go to kernel, using system calls that implement I/O.
+- UserSpace -> KernelSpace -> Hardware
+- User-space apps make I/O system calls → kernel drivers handle the hardware.
+- The actual hardware access (registers, DMA, interrupts) is done only by the kernel/driver.
+- Common system calls used,
+-     System         Call Purpose
+      open()	  Open a device file (e.g. /dev/ttyS0, /dev/sda).
+      read()	  Read data from the device.
+      write()	  Write data to the device.
+      ioctl()	  Control/configure the device (special operations).
+      mmap()	  Map device memory to user space (for faster I/O).
+      close()	  Close the device file.
   
