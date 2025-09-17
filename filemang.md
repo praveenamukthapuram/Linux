@@ -528,6 +528,7 @@ int main() {
       High-Level Library APIs	            Language/framework abstractions	            C++, Python, DB libraries
 
 ## 27. How do user space applications get access to the content of inode objects?
+- 
 
 
   
