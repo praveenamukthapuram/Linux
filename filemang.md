@@ -479,7 +479,33 @@ int main() {
   }
   ```
 
-## 24. 
+## 24. Can we open the same file from multiple processes? Explain the memory segment in kernel space and user space?
+- Yes, we can open the same file from multiple processes.
+- When each process calls open(),
+-     1. Kernel finds the inode object.
+      2. Allocates a new file object for that particular process.
+  	  3. Stores a pointer to the file object in processes fd table.
+- Example:
+-     Process A opens file.txt → gets FD=3, file object A, inode X.
+      Process B opens file.txt → gets FD=3 (in its own FD table), file object B, inode X.
+
+- Memory Segments in User Space,
+-     - Code Segment (text)
+      - Data Segment (globals/statics)
+      - Heap (dynamic allocations)
+      - Stack (local variables)
+
+- Memory Segments in Kernel Space,
+-     - Text Segment:        Kernel code / system call instructions
+      - Data Segment:        Global/static kernel variables
+      - BSS Segment:         Uninitialized global/static variables
+      - Heap:                Dynamically allocated objects
+                             ├─ struct file (File Objects)
+                             ├─ struct inode (Inodes)
+                             └─ Buffers, caches, kmalloc allocations
+      - Stack:               Per-process kernel stack
+                             └─ Used during system calls, interrupts
+      - Memory-Mapped I/O:   Hardware devices (I/O registers, framebuffers)
   
 
 
