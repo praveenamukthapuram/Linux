@@ -128,7 +128,7 @@ int main()
       close()	  Close the device file.
   
 ## 6. Why are basic I/O calls called universal I/O calls?
-- Basic I/O calls are called universal I/O calls because the same set of system calls can perform I/O on any kind of file/device in Linux/Unix, providing a          single, consistent interface.
+- Basic I/O calls are called universal I/O calls Low-Level I/O calls because the same set of system calls can perform I/O on any kind of file/device in Linux/Unix, providing a          single, consistent interface.
 - open(), read(), write(), close(), lseek(), ioctl().
 
 ## 7. What is the content of the Inode Object?
@@ -506,7 +506,28 @@ int main() {
       - Stack:               Per-process kernel stack
                              └─ Used during system calls, interrupts
       - Memory-Mapped I/O:   Hardware devices (I/O registers, framebuffers)
-  
+
+## 25. What is the difference between basic I/O calls and standard I/O calls?
+- Basic I/O calls / Universal / Low-Level I/O calls:
+-     - Direct system calls provided by the kernel to perform I/O
+  	  - Operates on file descriptors (int)
+  	  - No buffering; data goes directly to the kernel
+      - open(), read(), write(), close(), lseek()
+- Standard I/O calls / High-Level I/O calls:
+-     - Library functions built on top of basic I/O calls, provided by the C standard library (stdio.h)
+      - Operates on file pointers (FILE *)
+      - Buffered in user space for efficiency
+      - fopen(), fread(), fwrite(), fclose(), fseek()
+
+## 26. Other than the basic I/O and standard I/O calls,Is there any method to access the file ?
+-     Method	                            How It Works	                             Use Case
+      Memory-Mapped I/O (mmap)	            Map file to memory, access like array	    Large files, shared memory
+      Asynchronous I/O (aio_read/write)     Non-blocking read/write	                    High-performance I/O
+      Network/Socket I/O	                Access remote files over network	        NFS, FTP, HTTP
+      Device-Specific	                    Read/write special device files	            /dev devices
+      High-Level Library APIs	            Language/framework abstractions	            C++, Python, DB libraries
+
+## 27. How do user space applications get access to the content of inode objects?
 
 
   
