@@ -179,3 +179,60 @@ int main()
       return 0;
       }
   ```
+- By using fstat(), (If your program already has file open
+ 
+    ```c
+    int fd = open("myfile.txt", O_RDONLY);
+    struct stat st;
+    fstat(fd, &st);
+    printf("Inode number: %ld\n", st.st_ino);
+  ```
+    
+- By using lstat(), (Command Line Utilities)
+
+  ```c
+   stat myfile.txt
+   ls -i myfile.txt
+  ```
+
+## 11. Which system calls are used to access the file information?
+- System calls to access the file information,
+-     System Call	When to Use	                  What It Does
+      stat()	        You have a filename	          Retrieves information (metadata) about a file specified by its path.
+      lstat()	        You have a symbolic link	  Same as stat(), but if the file is a symbolic link, it returns information about the link itself instead                                                           of the target.
+      fstat()	        You have a file descriptor        Retrieves file information for an already opened file (using its file descriptor).
+
+  ```c
+  #include <stdio.h>
+  #include <sys/stat.h>
+  #include <unistd.h>
+  #include <fcntl.h>
+
+  int main() {
+    struct stat st;
+
+    // Using stat()
+    stat("myfile.txt", &st);
+    printf("Inode: %ld\n", st.st_ino);
+
+    // Using lstat() for symbolic links
+    lstat("mylink", &st);
+    printf("Link inode: %ld\n", st.st_ino);
+
+    // Using fstat() for an open file
+    int fd = open("myfile.txt", O_RDONLY);
+    fstat(fd, &st);
+    printf("Size: %ld bytes\n", st.st_size);
+    close(fd);
+
+    return 0;
+  }
+  ```
+
+## 12. ls command internally invoked which system call to access the file information?
+- Yes, ls internally uses,
+-     getdents() (to read directory entries)
+      stat() / lstat() (to access file information stored in the inode).
+
+
+  
