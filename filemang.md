@@ -234,5 +234,48 @@ int main()
 -     getdents() (to read directory entries)
       stat() / lstat() (to access file information stored in the inode).
 
+## 13. What happens after the kernel finds its inode object?
+-     1. Kernel looks up the Inode object ->  Metadata of the file
+      2. Kernel creates a File object     ->  open instance + offset + mode + link to inode
+      3. Kernel returns File Descriptor   ->  Integer handle in your process.
+
+-     User Space (Your Program)
+      ─────────────────────────
+      open("file.txt") ───────────────▶  Kernel Space
+
+      Process File Descriptor Table
+      ─────────────────────────────
+      FD=3 ──────────────┐
+                         │
+                         ▼
+            ┌────────────────────┐
+            │  File Object       │  (struct file)
+            │────────────────────│
+            │ - Pointer to Inode │──┐
+            │ - File Offset      │  │
+            │ - Access Flags     │  │
+            └────────────────────┘  │
+                                    │
+      Kernel VFS Layer
+      ────────────────────────────────────────────────
+                                    │
+                                    ▼
+                            ┌────────────────────┐
+                            │  Inode Object      │  (struct inode)
+                            │────────────────────│
+                            │ - File Type        │
+                            │ - Permissions      │
+                            │ - Owner/Group      │
+                            │ - Size             │
+                            │ - Pointers to Data │───┐
+                            │   Blocks on Disk   │   │
+                            └────────────────────┘   │
+                                                     │
+      Disk (Filesystem Blocks)
+      ─────────────────────────────────────────────────────
+                                                     │
+                                                     ▼
+                                         Actual File Data Blocks
+
 
   
