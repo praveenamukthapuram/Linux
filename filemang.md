@@ -528,7 +528,54 @@ int main() {
       High-Level Library APIs	            Language/framework abstractions	            C++, Python, DB libraries
 
 ## 27. How do user space applications get access to the content of inode objects?
-- 
+## 28. How do you get access to kernel objects/kernel data structure/Information present in kernel space?
+## 29. Which system calls are used to access the Inode object?
+- User-space programs cannot directly access an inode object; they can only ask the kernel to copy or use information from it.
+- But there are system calls that read or modify its contents indirectly (primarily stat, fstat, lstat, plus chmod/chown/link/unlink).
+
+## 30. How to print the Hello world on the screen by using basic I/O calls?
+```c
+#include <unistd.h>  // for write()
+
+int main() {
+    // write(int fd, const void *buf, size_t count)
+    write(1, "Hello, World\n", 13);
+    return 0;
+}
+```
+
+## 31. Which system call do we use to duplicate the file descriptor?
+- System Calls for Duplicating a File Descriptor,
+-     Call	                      Effect
+      dup(fd)	                  Duplicate fd into the next free FD
+      dup2(fd, newfd)	          Duplicate fd into newfd exactly
+      dup3(fd, newfd, flags)	  Same as dup2, with flags like O_CLOEXEC
+
+## 32. What are the advantages of dup system calls?
+- Multiple FDs - Two FDs → same file description → same offset/flags
+- Redirection  - Easily redirect stdin, stdout, stderr
+- IPC Setup	   - Share FDs between parent/child processes
+- Backup FDs   - Save & restore original file descriptors
+- Efficiency   - Cheaper than re-opening the file
+
+## 33. Which object stores the ownership information of a file?
+- The inode object (inside the kernel/filesystem) stores the ownership information (UID and GID) of a file.
+
+## 34. Which command is used to display the username corresponding ID?
+-     Command	            Use	                                Example Output
+      id	                Show current UID, GID, groups	    uid=1000(praveena) gid=1000(praveena)
+      id -nu <uid>	        Show username for a specific UID	praveena
+      whoami	            Show username of current user	    praveena
+      getent passwd <uid>	Show full passwd entry for UID	    praveena:x:1000:1000:Praveena M:/home/praveena:/bin/bash
+
+## 35. How can we see the multiple user information in our system?
+-     Command	                Purpose
+      cat /etc/passwd	        See all users on the system
+      cut -d: -f1 /etc/passwd	See only usernames
+      who	                    See currently logged-in users
+      w	                        See logged-in users + activity
+      users	                    See logged-in usernames only
+      cat /etc/group	        See all groups & their users
+      finger username	        Detailed info about a user (if installed)
 
 
-  
