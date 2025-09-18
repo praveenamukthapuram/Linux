@@ -578,4 +578,11 @@ int main() {
       cat /etc/group	        See all groups & their users
       finger username	        Detailed info about a user (if installed)
 
+## 36. Which command is used to change the UID and GID?
+-     Command	Option	            Meaning	                                                                 Example
+      usermod	-u <UID>	        Change the user’s UID (user ID)	                                         sudo usermod -u 2001 praveena (sets UID=2001)
+      usermod	-g <GID>	        Change the user’s primary GID (group ID)	                             sudo usermod -g 2001 praveena (sets GID=2001)
+      usermod	-u <UID> -g <GID>	Change both UID and primary GID at once	                                 sudo usermod -u 2001 -g 2001 praveena
+      usermod	-G group1,group2	Change user’s supplementary groups (not UID/GID but group membership)    sudo usermod -G wheel,audio praveena
+
 
