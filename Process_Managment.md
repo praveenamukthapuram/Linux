@@ -6,6 +6,7 @@
 -     Open files and resources
 -     A unique Process ID(PID).
 - When you run a program (like ls), OS creates a Process.
+  
 - Process Creation,
 -     1. Parent Process Initiates -> An existing process (often called the parent) requests the OS to create a new process.
                                   -> This is done using system calls (e.g., fork() in Unix/Linux, CreateProcess() in Windows).
@@ -25,10 +26,17 @@
       6. Process Termination      ->  When finished, the process calls exit() to terminate.
                                   -> The OS frees its resources.
                                   -> The parent can read the exit status using wait().
+  
 - System Calls Involved (Linux/Unix)
 -     System     Call	Purpose
       fork()	   Create a new process (child) by duplicating the parent.
       exec()     family (execl, execv, etc.)	Load a new program into the child’s memory.
       wait()	   Parent waits for child process to finish.
       exit()	   Child terminates and returns status to parent.
+
+- Process Creation Tree,
+-     The first process is typically init (or systemd in Linux).
+-     All other processes are descendants of this initial process.
+-     This forms a process hierarchy (tree).
+
   
