@@ -60,7 +60,91 @@
   ```
 
 ## 2. Differentiate between the fork() and exec() system calls.
-- 
+-     Feature	             fork()	                                                             exec()
+      Definition	         Creates a new child process by duplicating the parent process.	     Replaces the current process image with a new program.
+      Purpose	             To create a new process.	                                           To execute a new program in the current process.
+      Process Creation	   Yes – creates a child process.	                                     No – does not create a new process.
+      Execution Flow	     Both parent and child continue executing after fork().	             The current process is replaced; the old code stops running.
+      Return Value	       Returns 0 to the child, and child PID to the parent.	               Returns only if it fails (returns -1).
+      Memory Sharing	     Child gets a copy of parent’s memory (copy-on-write).	             Entire memory of current process is replaced by the new program.
+      PID (Process ID)	   Child has a unique PID different from parent.	                     Same PID is retained since no new process is created.
+      Program Image	       Remains the same for both parent and child.                         Replaced by the new program.
+      Used For	           Creating concurrent processes. 	                                   Running a new executable file.
+      Typical Use Case	   Used before exec() to create a child process.	                     Used after fork() to run another program in the child.
+      Returns Twice?	     Yes — once in parent, once in child.	                               No — only returns if execution fails.
+      Example Function	   pid_t pid = fork();	                                               execlp("ls", "ls", "-l", NULL);
+
+##3. Write a C program to demonstrate the use of fork() system call.
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    pid_t pid;
+
+    printf("Before fork()\n");
+
+    pid = fork();  // Create a new process
+
+    if (pid < 0) {
+        // fork() failed
+        printf("Fork failed!\n");
+        return 1;
+    }
+    else if (pid == 0) {
+        // Child process
+        printf("This is the Child Process.\n");
+        printf("Child PID: %d\n", getpid());
+        printf("Parent PID (from child): %d\n", getppid());
+    }
+    else {
+        // Parent process
+        printf("This is the Parent Process.\n");
+        printf("Parent PID: %d\n", getpid());
+        printf("Child PID (from parent): %d\n", pid);
+    }
+
+    printf("This line is executed by both parent and child.\n");
+    return 0;
+}
+```
+
+##4. Difference between execvp() and execlp()?
+-     execvp() - Executes a new program, with arguments passed as an array (vector of strings).
+               - int execvp(const char *file, char *const argv[]);
+-     execlp() - Executes a new program, with arguments passed as a list (explicitly, one by one).
+               - int execlp(const char *file, const char *arg, ..., (char *)NULL);
+
+##5. Write a C program to illustrate the use of the execvp() function.
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    // Define command and its arguments (must end with NULL)
+    char *args[] = {"ls", "-l", NULL};
+
+    printf("Before execvp()\n");
+
+    // Replace current process image with the "ls -l" command
+    execvp("ls", args);
+
+    // This line runs only if execvp() fails
+    perror("execvp failed");
+
+    return 0;
+}
+```
+
+##6. How does the vfork() system call differ from fork()?
+-     fork()	   Creates a new child process that is an exact copy of the parent process, with its own address space.
+      vfork()	   Creates a new child process, but shares the parent’s address space temporarily until the child either calls exec() or _exit().
+
+##7. Discuss the significance of the getpid() and getppid() system calls.
+-     getpid()	 Returns the process ID (PID) of the calling process.
+      getppid()	 Returns the parent process ID (PPID) of the calling process.
+
+##8. Explain the concept of process termination in UNIX-like operating systems.
 
 
 
