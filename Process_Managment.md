@@ -145,6 +145,26 @@ int main() {
       getppid()	 Returns the parent process ID (PPID) of the calling process.
 
 ##8. Explain the concept of process termination in UNIX-like operating systems.
+-     When a process finishes its task or encounters an error, it stops running and releases all resources it was using (like memory, file descriptors, etc.) is called Process Termination.
+-     It can can be done by,
+        - Normal Termination         -> The process completes its task successfully and calls the exit() system call.
+        - Error Termination          -> The process detects an error and calls exit() with a non-zero status.
+        - Abnormal Termination       -> The process is terminated by another process or by the kernel using a signal (e.g., SIGKILL, SIGTERM).
+        - Killed by another Process  -> The parent or another process sends a termination signal (using kill() system call).
+        -  Killed by kernel           -> The kernel terminates a process due to illegal operations (like segmentation fault, division by zero).
+-     System calls involved,
+        - exit(status)        -> Called by the process itself to terminate and return an exit status to the parent.
+        - _exit(status)       -> Lower-level version used inside the system (no cleanup of stdio buffers).
+        - wait() / waitpid()  -> Called by the parent process to collect the child’s termination status and prevent zombie processes.
+-     During Termination Process,
+        - All open files are closed.
+        - Memory (heap, stack, data segments) is released.
+        - Child processes may be assigned to the init (or systemd) process if the parent terminates first.
+        - The process moves into a zombie state temporarily until the parent reads its exit status using wait() or waitpid().
+        - Once the parent collects the status, the process is completely removed from the process table.
+-     Zombie process   -> A terminated process whose exit status has not yet been collected by its parent. It still occupies an entry in the process table.
+-     Orphan Process   -> A child process whose parent has already terminated. The init process (PID 1) adopts it.
+- 
 
 
 
