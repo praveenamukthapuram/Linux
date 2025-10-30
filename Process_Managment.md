@@ -217,7 +217,16 @@ int main() {
 - Role of fork() in Multitasking,
         - The fork() system call is used to create a new process (called a child process) from an existing one (the parent process).
         - After fork(), both processes run concurrently, each with its own copy of memory and execution flow.
-- 
+- fork() enables multitasking by,
+- Process Duplication        --> When a process calls fork(), the operating system creates a duplicate of that process.
+                             --> The new process (child) gets its own memory space, program counter, and registers.
+- Parallel Execution         --> Both the parent and child processes start executing independently after the fork() call.
+                             --> The OS scheduler allocates CPU time slices to each process, allowing concurrent execution.
+- Independent Tasks          --> The parent and child can perform different tasks.
+                             --> For example, the parent may handle input while the child performs computation or I/O operations.
+- Basis for Process Trees    -->Using multiple fork() calls, a process can create multiple children, forming a process hierarchy — the backbone of multitasking.
+
+##14, 
 
 
 
