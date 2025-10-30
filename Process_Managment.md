@@ -226,7 +226,90 @@ int main() {
                              --> For example, the parent may handle input while the child performs computation or I/O operations.
 - Basis for Process Trees    -->Using multiple fork() calls, a process can create multiple children, forming a process hierarchy — the backbone of multitasking.
 
-##14, 
+##14, How does the exec() system call replace the current process image with a new one?
+- The exec() system call replaces the current process’s program with a new program.
+- It loads the new executable into memory, replacing the old code, data, and stack — but keeps the same PID.
+- If successful, it never returns to the old program; execution starts from the new program’s main() function.
+
+##15. Explain the concept of process scheduling in operating systems.
+- Process scheduling decides which process runs next, aiming for efficient and fair CPU use through various scheduling algorithms.
+
+##16. Describe the role of the clone() system call in process management.
+- The clone() system call creates a new process or thread and allows fine-grained control over which resources are shared between parent and child — making it the foundation of Linux threads.
+- Syntax    -> int clone(int (*fn)(void *), void *child_stack, int flags, void *arg, ...);
+                 - fn → function executed by the new process/thread.
+                 - child_stack → stack for the child.
+                 - flags → controls which resources are shared.
+
+##17. Write a program in C to create a zombie process and explain how to avoid it.
+- A zombie process occurs when the parent does not call wait() for a terminated child.
+- It can be avoided by using wait() / waitpid() or by ignoring SIGCHLD.
+- Program to create Zombie Process,
+  ```c
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <unistd.h>
+
+  int main() {
+    pid_t pid = fork();
+
+    if (pid > 0) {
+        // Parent process
+        printf("Parent process (PID: %d)\n", getpid());
+        printf("Child process (PID: %d) created.\n", pid);
+        sleep(10); // Keep parent alive so child becomes zombie
+    } 
+    else if (pid == 0) {
+        // Child process
+        printf("Child process exiting...\n");
+        exit(0);
+    } 
+    else {
+        // Error
+        perror("fork failed");
+        return 1;
+    }
+
+    return 0;
+   }
+  ```
+  
+- Program to avoid Zombie Process,
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t pid = fork();
+
+    if (pid > 0) {
+        wait(NULL); // Reap child immediately
+        printf("Child reaped, no zombie created.\n");
+    } 
+    else if (pid == 0) {
+        printf("Child process running.\n");
+        exit(0);
+    } 
+    else {
+        perror("fork failed");
+    }
+
+    return 0;
+}
+```
+
+##18. Discuss the significance of the setuid() and setgid() system calls in process man
+- The setuid() and setgid() system calls in UNIX-like operating systems are used to change the user ID (UID) and group ID (GID) of a process. They are important for controlling process privileges and permissions.
+
+##19. Explain the concept of process groups and their significance in UNIX-like operating systems.
+- In UNIX-like operating systems, a process group is a collection of one or more related processes that can be managed together.
+- Each process belongs to a process group, identified by a Process Group ID (PGID).
+- One process (usually the first created) acts as the group leader — its PID is the same as the group’s PGID.
+- Process groups are mainly used for job control and signal management.
+
+##20. Write a C program to demonstrate the use of the waitpid() function for process synchronization.
 
 
 
