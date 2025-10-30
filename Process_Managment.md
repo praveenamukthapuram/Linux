@@ -164,6 +164,59 @@ int main() {
         - Once the parent collects the status, the process is completely removed from the process table.
 -     Zombie process   -> A terminated process whose exit status has not yet been collected by its parent. It still occupies an entry in the process table.
 -     Orphan Process   -> A child process whose parent has already terminated. The init process (PID 1) adopts it.
+
+##9. Write a program in C to create a child process using fork() and print its PID.
+```c
+#include <stdio.h>
+#include <unistd.h>   // for fork(), getpid(), getppid()
+#include <sys/types.h>
+
+int main() {
+    pid_t pid;
+
+    // Create a child process
+    pid = fork();
+
+    if (pid < 0) {
+        // Error case
+        printf("Fork failed!\n");
+        return 1;
+    }
+    else if (pid == 0) {
+        // This block executes in the child process
+        printf("Child Process:\n");
+        printf("Child PID: %d\n", getpid());
+        printf("Parent PID: %d\n", getppid());
+    }
+    else {
+        // This block executes in the parent process
+        printf("Parent Process:\n");
+        printf("Parent PID: %d\n", getpid());
+        printf("Child PID: %d\n", pid);
+    }
+
+    return 0;
+}
+```
+
+##10. Describe the process hierarchy in UNIX-like operating systems.
+- The process hierarchy in UNIX-like systems is a tree structure starting from the init (PID 1) process. Every process is created by another process using fork(), may replace itself with a new program using exec(), and terminates using exit(). Parent–child relationships define the structure and management of all        running processes.
+
+##11. What is the purpose of the exit() function in C programming?
+- The exit() function in C is used to terminate a program (process) in a controlled and clean manner. It ensures that all resources are properly released before the program ends.
+
+##12. Explain how the execve() system call works and provide a code example.
+- The execve() system call in UNIX-like operating systems is used to replace the current running process with a new program.
+
+##13. Discuss the role of the fork() system call in implementing multitasking.
+- It allows a process to create a copy of itself, enabling multiple processes to run concurrently — which is the foundation of multitasking.
+- Multitasking -> Multitasking is the ability of an operating system to execute multiple processes seemingly at the same time by sharing CPU time among them.
+-     Each process:
+        - Has its own memory space, program counter, stack, and resources.
+        - Can execute independently.
+- Role of fork() in Multitasking,
+        - The fork() system call is used to create a new process (called a child process) from an existing one (the parent process).
+        - After fork(), both processes run concurrently, each with its own copy of memory and execution flow.
 - 
 
 
