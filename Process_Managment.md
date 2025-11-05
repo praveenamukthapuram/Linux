@@ -310,7 +310,179 @@ int main() {
 - Process groups are mainly used for job control and signal management.
 
 ##20. Write a C program to demonstrate the use of the waitpid() function for process synchronization.
-- 
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
+int main() {
+    pid_t pid, wpid;
+    int status;
+
+    pid = fork();  // Create a child process
+
+    if (pid == -1) {
+        perror("fork failed");
+        exit(1);
+    } 
+    else if (pid == 0) {
+        // Child process
+        printf("Child process (PID: %d) is running...\n", getpid());
+        sleep(3);  // Simulate some work
+        printf("Child process exiting.\n");
+        exit(10);  // Exit with status 10
+    } 
+    else {
+        // Parent process
+        printf("Parent waiting for child (PID: %d)...\n", pid);
+        wpid = waitpid(pid, &status, 0);  // Wait for specific child
+
+        if (wpid == -1) {
+            perror("waitpid failed");
+            exit(1);
+        }
+
+        if (WIFEXITED(status)) {
+            printf("Child (PID: %d) exited with status %d\n", wpid, WEXITSTATUS(status));
+        }
+    }
+
+    return 0;
+}
+```
+
+#21. Discuss the role of the execle() function in the exec() family of calls.
+- execle() is used to replace the current process image with a new program, while allowing the caller to explicitly specify the environment variables for the new    process.
+- Syntax  -> int execle(const char *path, const char *arg, ..., (char *)NULL, char *const envp[]);
+- path → Path to the executable file.
+- arg, ... → List of arguments passed to the new program (must end with NULL).
+- envp[] → Array of strings representing the environment variables for the new program.
+
+##22. Describe the purpose of the nice() system call in process scheduling.
+- The nice() system call changes a process’s scheduling priority by adjusting its niceness value, helping the OS manage CPU time fairly among processes.
+
+##23. Write a program in C to create a daemon process.
+- A daemon process is a background service detached from any terminal.
+- It’s created using fork(), setsid(), and by redirecting or closing standard I/O streams.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int main() {
+    pid_t pid;
+
+    // Step 1: Fork a new process
+    pid = fork();
+
+    if (pid < 0) {
+        perror("fork failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Step 2: Exit the parent process
+    if (pid > 0) {
+        printf("Daemon process created with PID: %d\n", pid);
+        exit(EXIT_SUCCESS);
+    }
+
+    // Step 3: Create a new session and become session leader
+    if (setsid() < 0) {
+        perror("setsid failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Step 4: Change working directory to root
+    chdir("/");
+
+    // Step 5: Set file permissions mask to 0
+    umask(0);
+
+    // Step 6: Close standard file descriptors
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+
+    // Step 7: Daemon's main task (runs in background)
+    while (1) {
+        int fd = open("/tmp/daemon_log.txt", O_WRONLY | O_CREAT | O_APPEND, 0600);
+        if (fd != -1) {
+            dprintf(fd, "Daemon is running... PID: %d\n", getpid());
+            close(fd);
+        }
+        sleep(5); // Log every 5 seconds
+    }
+
+    return 0;
+}
+```
+- Steps Explained:
+- Fork — Create a new process.
+- Exit parent — So only the child continues (detaches from terminal).
+- setsid() — Create a new session and become session leader (no controlling terminal).
+- chdir("/") — Change directory to root to avoid blocking file systems.
+- umask(0) — Reset file permission mask.
+- close() — Close standard input, output, and error.
+- Run background task — The daemon runs independently in the background.
+
+- To test ,
+- Compile and run   -> gcc daemon.c -o daemon
+                    -> ./daemon
+- Check the process -> ps -ef | grep daemon
+- View logout       -> cat /tmp/daemon_log.txt
+
+##24. Explain the role of the getpid() and getppid() functions in process management.
+- getpid() → returns the current process’s ID.
+- getppid() → returns the parent process’s ID.
+
+##25. Discuss the difference between the fork() and clone() system calls.
+- fork() → Creates a separate, independent process.
+- clone() → Creates a new process or thread, with customizable resource sharing — it’s more flexible and lower-level.
+
+##26. Write a C program to demonstrate the use of the system() function for executing shell commands.
+- The system() function is used to execute shell commands from within a C program.
+- It’s a simple way to run external commands, but for more control (like passing arguments), functions like exec() are preferred.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int ret;
+
+    printf("Executing shell commands using system()...\n");
+
+    // Example 1: List files in the current directory
+    ret = system("ls -l");
+    printf("\nCommand executed with return value: %d\n", ret);
+
+    // Example 2: Create a directory
+    ret = system("mkdir demo_dir");
+    printf("\nDirectory 'demo_dir' created (return value: %d)\n", ret);
+
+    // Example 3: Display the current date and time
+    ret = system("date");
+    printf("\nDate command executed (return value: %d)\n", ret);
+
+    // Example 4: Remove the created directory
+    ret = system("rmdir demo_dir");
+    printf("\nDirectory 'demo_dir' removed (return value: %d)\n", ret);
+
+    return 0;
+}
+```
+
+#27. Explain the concept of process states in UNIX-like operating systems.
+- A process state represents the current condition of a process.
+- UNIX processes move between new, ready, running, waiting, stopped, and zombie states depending on CPU scheduling, I/O operations, and termination events.
+- New(Created)                   -> The process is being created after a fork() call but is not yet ready to run.
+- Ready (Runnable)               -> The process is loaded in memory and waiting for CPU time to execute. It’s in the ready queue.
+- Running                        -> The process is currently being executed by the CPU.
+- Blocked (Waiting / Sleeping)   -> The process is waiting for an event (like I/O completion or signal). It cannot continue until the event occurs.
+- Stopped                        -> The process is paused (e.g., by a signal like SIGSTOP or Ctrl+Z). It can be resumed later with SIGCONT.
+- Zombie (Terminated)            -> The process has finished execution but still has an entry in the process table because the parent hasn’t called wait() to                                          collect its exit status.
 
   
