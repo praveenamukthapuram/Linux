@@ -310,7 +310,7 @@ int main() {
 - Process groups are mainly used for job control and signal management.
 
 ##20. Write a C program to demonstrate the use of the waitpid() function for process synchronization.
-
+- 
 
 
   
