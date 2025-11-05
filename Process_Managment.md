@@ -485,4 +485,7 @@ int main() {
 - Stopped                        -> The process is paused (e.g., by a signal like SIGSTOP or Ctrl+Z). It can be resumed later with SIGCONT.
 - Zombie (Terminated)            -> The process has finished execution but still has an entry in the process table because the parent hasn’t called wait() to                                          collect its exit status.
 
+##28. Describe the purpose of the chroot() system call and provide an example.agement.
+- 
+
   
