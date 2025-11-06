@@ -486,6 +486,125 @@ int main() {
 - Zombie (Terminated)            -> The process has finished execution but still has an entry in the process table because the parent hasn’t called wait() to                                          collect its exit status.
 
 ##28. Describe the purpose of the chroot() system call and provide an example.agement.
-- 
+- The chroot() system call changes a process’s root directory, confining it to a specific part of the filesystem — useful for creating isolated, sandboxed           environments.
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+int main() {
+    // Change root directory to /home/testroot
+    if (chroot("/home/testroot") != 0) {
+        perror("chroot failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Change working directory to new root
+    chdir("/");
+
+    printf("Root directory successfully changed.\n");
+    system("ls /");  // List files inside the new root
+
+    return 0;
+}
+```
+
+##29. Write a C program to create a process using fork() and pass arguments to the child process.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main() {
+    pid_t pid;
+
+    // Create a new process
+    pid = fork();
+
+    if (pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+
+    if (pid == 0) {
+        // Child process
+        printf("Child process (PID: %d)\n", getpid());
+
+        // Arguments to pass to execvp()
+        char *args[] = {"ls", "-l", "/home", NULL};
+
+        // Replace child process with new program
+        execvp("ls", args);
+
+        // execvp() returns only if it fails
+        perror("execvp failed");
+        exit(1);
+    } else {
+        // Parent process
+        printf("Parent process (PID: %d) created child (PID: %d)\n", getpid(), pid);
+        wait(NULL); // Wait for the child to finish
+        printf("Child process finished.\n");
+    }
+
+    return 0;
+}
+```
+
+##30. Explain the significance of process identifiers (PIDs) in process management.
+- A PID uniquely identifies a process, enabling the operating system to manage, control, and communicate with processes efficiently.
+- It is essential for scheduling, synchronization, resource tracking, and system monitoring.
+
+##31. Write a program in C to demonstrate process synchronization using semaphores.
+- Semaphores are used to coordinate execution between processes — ensuring one process waits for another to finish or reach a certain point before continuing.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <sys/wait.h>
+
+int main() {
+    sem_t sem;
+
+    // Initialize semaphore with value 0 (locked)
+    sem_init(&sem, 1, 0);
+
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+
+    if (pid == 0) {
+        // Child process
+        printf("Child: Doing some work...\n");
+        sleep(2);  // Simulate work
+        printf("Child: Work done! Releasing semaphore.\n");
+        
+        // Signal (increment) semaphore to allow parent to proceed
+        sem_post(&sem);
+        exit(0);
+    } else {
+        // Parent process
+        printf("Parent: Waiting for child to complete...\n");
+
+        // Wait (decrement) semaphore until child signals
+        sem_wait(&sem);
+        printf("Parent: Child has finished. Continuing.\n");
+
+        wait(NULL);  // Wait for child to exit
+    }
+
+    // Destroy the semaphore
+    sem_destroy(&sem);
+
+    return 0;
+}
+```
+
+##32. 
 
   
